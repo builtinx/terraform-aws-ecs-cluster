@@ -22,7 +22,8 @@ variable "ecs_for_ec2_service_role_name" {
   default = ""
 }
 
-variable "vpc_id" {}
+variable "vpc_id" {
+}
 
 variable "ami_id" {
   default = "ami-6944c513"
@@ -56,9 +57,11 @@ variable "detailed_monitoring" {
   default = false
 }
 
-variable "key_name" {}
+variable "key_name" {
+}
 
-variable "cloud_config_content" {}
+variable "cloud_config_content" {
+}
 
 variable "cloud_config_content_type" {
   default = "text/cloud-config"
@@ -92,9 +95,10 @@ variable "enabled_metrics" {
     "GroupTotalInstances",
   ]
 
-  type = "list"
+  type = list(string)
 }
 
 variable "subnet_ids" {
-  type = "list"
+  type = list(string)
 }
+

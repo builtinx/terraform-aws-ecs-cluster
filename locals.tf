@@ -4,3 +4,4 @@ locals {
   security_group_name           = "sgContainerInstance"
   ecs_for_ec2_service_role_name = "${var.environment}ContainerInstanceProfile"
 }
+
