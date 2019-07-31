@@ -75,7 +75,7 @@ data "aws_iam_policy_document" "ecs_autoscale_assume_role" {
 resource "aws_security_group" "container_instance" {
   vpc_id = "${var.vpc_id}"
 
-  tags {
+  tags = {
     Name        = "${coalesce(var.security_group_name, local.security_group_name)}"
     Project     = "${var.project}"
     Environment = "${var.environment}"
@@ -88,7 +88,7 @@ resource "aws_security_group" "container_instance" {
 data "template_file" "container_instance_base_cloud_config" {
   template = "${file("${path.module}/cloud-config/base-container-instance.yml.tpl")}"
 
-  vars {
+  vars = {
     ecs_cluster_name = "${aws_ecs_cluster.container_instance.name}"
   }
 }
@@ -131,7 +131,7 @@ data "aws_ami" "ecs_ami" {
 
 data "aws_ami" "user_ami" {
   count  = "${var.lookup_latest_ami ? 0 : 1}"
-  owners = ["${var.ami_owners}"]
+  owners = "${var.ami_owners}"
 
   filter {
     name   = "image-id"
@@ -183,9 +183,9 @@ resource "aws_autoscaling_group" "container_instance" {
 
   name = "${coalesce(var.autoscaling_group_name, local.autoscaling_group_name)}"
 
-  launch_template = {
+  launch_template {
     id      = "${aws_launch_template.container_instance.id}"
-    version = "$$Latest"
+    version = "$Latest"
   }
 
   health_check_grace_period = "${var.health_check_grace_period}"
@@ -194,8 +194,8 @@ resource "aws_autoscaling_group" "container_instance" {
   termination_policies      = ["OldestLaunchConfiguration", "Default"]
   min_size                  = "${var.min_size}"
   max_size                  = "${var.max_size}"
-  enabled_metrics           = ["${var.enabled_metrics}"]
-  vpc_zone_identifier       = ["${var.subnet_ids}"]
+  enabled_metrics           = "${var.enabled_metrics}"
+  vpc_zone_identifier       = "${var.subnet_ids}"
 
   tag {
     key                 = "Name"
