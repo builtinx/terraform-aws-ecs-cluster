@@ -30,3 +30,6 @@ output "container_instance_ecs_for_ec2_service_role_arn" {
   value = aws_iam_role.container_instance_ec2.arn
 }
 
+output "launch_template_id" {
+  value = aws_launch_template.container_instance.id
+}
