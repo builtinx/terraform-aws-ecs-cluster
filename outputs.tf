@@ -22,6 +22,10 @@ output "container_instance_autoscaling_group_name" {
   value = aws_autoscaling_group.container_instance.name
 }
 
+output "container_instance_autoscaling_group_name_scheduled_tasks" {
+  value = "${aws_autoscaling_group.container_instance_scheduled_tasks.name}"
+}
+
 output "ecs_service_role_arn" {
   value = aws_iam_role.ecs_service_role.arn
 }

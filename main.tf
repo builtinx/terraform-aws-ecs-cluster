@@ -223,7 +223,7 @@ resource "aws_autoscaling_group" "container_instance" {
   }
 }
 
-resource "aws_launch_template" "container_instance" {
+resource "aws_launch_template" "container_instance_scheduled_tasks" {
   block_device_mappings {
     device_name = var.lookup_latest_ami ? join("", data.aws_ami.ecs_ami.*.root_device_name) : join("", data.aws_ami.user_ami.*.root_device_name)
 
@@ -239,7 +239,7 @@ resource "aws_launch_template" "container_instance" {
 
   disable_api_termination = false
 
-  name_prefix = "lt${title(var.environment)}ContainerInstance-"
+  name_prefix = "lt${title(var.environment)}ContainerInstanceScheduledTasks-"
 
   iam_instance_profile {
     name = aws_iam_instance_profile.container_instance.name
@@ -250,7 +250,7 @@ resource "aws_launch_template" "container_instance" {
   image_id = var.lookup_latest_ami ? join("", data.aws_ami.ecs_ami.*.image_id) : join("", data.aws_ami.user_ami.*.image_id)
 
   instance_initiated_shutdown_behavior = "terminate"
-  instance_type                        = var.instance_type
+  instance_type                        = var.instance_type_scheduled_tasks
   key_name                             = var.key_name
   vpc_security_group_ids               = [aws_security_group.container_instance.id]
   user_data = base64encode(
@@ -262,30 +262,30 @@ resource "aws_launch_template" "container_instance" {
   }
 }
 
-resource "aws_autoscaling_group" "container_instance" {
+resource "aws_autoscaling_group" "container_instance_scheduled_tasks" {
   lifecycle {
     create_before_destroy = true
   }
 
-  name = coalesce(var.autoscaling_group_name, local.autoscaling_group_name)
+  name = coalesce(var.autoscaling_group_name, local.autoscaling_group_name_scheduled_tasks)
 
   launch_template {
-    id      = aws_launch_template.container_instance.id
+    id      = aws_launch_template.container_instance_scheduled_tasks.id
     version = "$Latest"
   }
 
   health_check_grace_period = var.health_check_grace_period
   health_check_type         = "EC2"
-  desired_capacity          = var.desired_capacity
+  desired_capacity          = var.desired_capacity_scheduled_tasks
   termination_policies      = ["OldestLaunchConfiguration", "Default"]
-  min_size                  = var.min_size
-  max_size                  = var.max_size
+  min_size                  = var.min_size_scheduled_tasks
+  max_size                  = var.max_size_scheduled_tasks
   enabled_metrics           = var.enabled_metrics
   vpc_zone_identifier       = var.subnet_ids
 
   tag {
     key                 = "Name"
-    value               = "ContainerInstance"
+    value               = "ContainerInstanceScheduledTasks"
     propagate_at_launch = true
   }
 
@@ -307,5 +307,20 @@ resource "aws_autoscaling_group" "container_instance" {
 #
 resource "aws_ecs_cluster" "container_instance" {
   name = coalesce(var.cluster_name, local.cluster_name)
+  capacity_providers = [aws_ecs_capacity_provider.scheduled_tasks.name]
+  default_capacty_provider_strategy {
+    capacity_provider = aws_ecs_capacity_provider.scheduled_tasks.name
+  }
 }
 
+resource "aws_ecs_capacity_provider" "scheduled_tasks" {
+  name = "scheduled_tasks"
+  auto_scaling_group_provider {
+    auto_scaling_group_arn = aws_autoscaling_group.container_instance_scheduled_tasks.arn
+    managed_scaling {
+      status = "ENABLED"
+      target_capacity = 100
+    }
+    managed_termination_protection = false
+  }
+}
