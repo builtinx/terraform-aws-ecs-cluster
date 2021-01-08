@@ -22,8 +22,8 @@ output "ecs_autoscale_role_name" {
   value = "${aws_iam_role.ecs_autoscale_role.name}"
 }
 
-output "container_instance_autoscaling_group_name" {
-  value = "${aws_autoscaling_group.container_instance.name}"
+output "container_instance_autoscaling_group_name_scheduled_tasks" {
+  value = "${aws_autoscaling_group.container_instance_scheduled_tasks.name}"
 }
 
 output "ecs_service_role_arn" {
