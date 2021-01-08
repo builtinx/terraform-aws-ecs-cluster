@@ -32,6 +32,10 @@ variable "instance_type" {
   default = "t2.micro"
 }
 
+variable "instance_type_scheduled_tasks" {
+  default = "m5.4xlarge"
+}
+
 variable "key_name" {}
 
 variable "cloud_config_content" {}
@@ -48,8 +52,20 @@ variable "desired_capacity" {
   default = "1"
 }
 
+variable "desired_capacity_scheduled_tasks" {
+  default = "0"
+}
+
 variable "min_size" {
   default = "1"
+}
+
+variable "max_size_scheduled_tasks" {
+  default = "10"
+}
+
+variable "min_size_scheduled_tasks {
+  default = "0"
 }
 
 variable "max_size" {
