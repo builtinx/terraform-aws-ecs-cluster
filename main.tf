@@ -306,7 +306,7 @@ resource "aws_autoscaling_group" "container_instance_scheduled_tasks" {
 # ECS resources
 #
 resource "aws_ecs_cluster" "container_instance" {
-  name = coalesce(var.cluster_name, local.cluster_name)
+  name               = coalesce(var.cluster_name, local.cluster_name)
   capacity_providers = [aws_ecs_capacity_provider.scheduled_tasks.name]
   default_capacty_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.scheduled_tasks.name
@@ -318,7 +318,7 @@ resource "aws_ecs_capacity_provider" "scheduled_tasks" {
   auto_scaling_group_provider {
     auto_scaling_group_arn = aws_autoscaling_group.container_instance_scheduled_tasks.arn
     managed_scaling {
-      status = "ENABLED"
+      status          = "ENABLED"
       target_capacity = 100
     }
     managed_termination_protection = false
