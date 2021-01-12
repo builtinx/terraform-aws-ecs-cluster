@@ -322,6 +322,6 @@ resource "aws_ecs_capacity_provider" "scheduled_tasks" {
       status          = "ENABLED"
       target_capacity = 100
     }
-    managed_termination_protection = true
+    managed_termination_protection = "ENABLED"
   }
 }
