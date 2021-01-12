@@ -278,6 +278,7 @@ resource "aws_autoscaling_group" "container_instance_scheduled_tasks" {
   health_check_type         = "EC2"
   desired_capacity          = var.desired_capacity_scheduled_tasks
   termination_policies      = ["OldestLaunchConfiguration", "Default"]
+  protect_from_scale_in     = true
   min_size                  = var.min_size_scheduled_tasks
   max_size                  = var.max_size_scheduled_tasks
   enabled_metrics           = var.enabled_metrics
@@ -308,7 +309,7 @@ resource "aws_autoscaling_group" "container_instance_scheduled_tasks" {
 resource "aws_ecs_cluster" "container_instance" {
   name               = local.ecs_cluster_name
   capacity_providers = [aws_ecs_capacity_provider.scheduled_tasks.name]
-  default_capacty_provider_strategy {
+  default_capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.scheduled_tasks.name
   }
 }
@@ -321,6 +322,6 @@ resource "aws_ecs_capacity_provider" "scheduled_tasks" {
       status          = "ENABLED"
       target_capacity = 100
     }
-    managed_termination_protection = false
+    managed_termination_protection = true
   }
 }
