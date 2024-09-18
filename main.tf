@@ -307,7 +307,11 @@ resource "aws_autoscaling_group" "container_instance_scheduled_tasks" {
 # ECS resources
 #
 resource "aws_ecs_cluster" "container_instance" {
-  name               = local.ecs_cluster_name
+  name = local.ecs_cluster_name
+}
+
+resource "aws_ecs_cluster_capacity_providers" "container_instance" {
+  cluster_name       = aws_ecs_cluster.container_instance.name
   capacity_providers = [aws_ecs_capacity_provider.scheduled_tasks.name]
   default_capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.scheduled_tasks.name
