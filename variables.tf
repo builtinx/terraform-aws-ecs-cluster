@@ -92,7 +92,7 @@ variable "max_size" {
 }
 
 variable "max_size_scheduled_tasks" {
-  default = "10"
+  default = "0"
 }
 
 variable "min_size_scheduled_tasks" {
